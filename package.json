@@ -1,0 +1,17 @@
+{
+  "name": "code",
+  "version": "1.0.0",
+  "main": "migrateData.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tushar",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "code": "file:",
+    "dotenv": "^16.4.7",
+    "mysql2": "^3.11.5",
+    "sequelize": "^6.37.5"
+  }
+}
