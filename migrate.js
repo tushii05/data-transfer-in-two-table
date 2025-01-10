@@ -3,6 +3,8 @@ const mysql = require('mysql2/promise');
 require('dotenv').config();
 const phpUnserialize = require('php-serialize');
 
+//------------------main file------------------
+
 // Setup Sequelize
 const sequelize = new Sequelize(process.env.LOCAL_DB, process.env.LOCAL_USER, process.env.LOCAL_PASSWORD, {
     host: process.env.LOCAL_HOST,
