@@ -12,6 +12,8 @@
     "code": "file:",
     "dotenv": "^16.4.7",
     "mysql2": "^3.11.5",
+    "php-serialize": "^5.0.1",
+    "php-unserialize": "^0.0.1",
     "sequelize": "^6.37.5"
   }
 }
