@@ -55,3 +55,8 @@ To display a comparison between the Sequelize model and the SQL `wp_posts` table
 - **Non-Matching Fields**: 36 fields are either custom fields or not found in the default `wp_posts` table (e.g., `lang_id`, `image_big`, `pageviews`, `slider_order`, etc.).
 
 This comparison shows how your Sequelize model can be mapped or extended to the `wp_posts` schema, and which fields may need to be added as custom fields in the WordPress database to fully match your requirements.
+
+
+
+
+migrate is final
