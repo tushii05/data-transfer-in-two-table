@@ -28,6 +28,7 @@ const LocalTable = sequelize.define('LocalTable', {
     title_slug: { type: DataTypes.STRING, allowNull: true },
     title_hash: { type: DataTypes.STRING, allowNull: true },
     keywords: { type: DataTypes.STRING, allowNull: true },
+    summary: { type: DataTypes.TEXT('long'), allowNull: true },
     content: { type: DataTypes.TEXT('long'), allowNull: true },
     category_id: { type: DataTypes.INTEGER, allowNull: true },
     image_big: { type: DataTypes.STRING, allowNull: true },
@@ -49,6 +50,7 @@ const LocalTable = sequelize.define('LocalTable', {
     is_scheduled: { type: DataTypes.TINYINT, allowNull: true, defaultValue: 0 },
     visibility: { type: DataTypes.TINYINT, allowNull: true, defaultValue: 1 },
     show_right_column: { type: DataTypes.TINYINT, allowNull: true, defaultValue: 1 },
+    isOld: { type: DataTypes.TINYINT, allowNull: true, defaultValue: 0 },
     post_type: { type: DataTypes.STRING, allowNull: true, defaultValue: 'post' },
     video_path: { type: DataTypes.STRING, allowNull: true },
     video_storage: { type: DataTypes.STRING, allowNull: true, defaultValue: 'local' },
@@ -72,7 +74,6 @@ const LocalTable = sequelize.define('LocalTable', {
     tableName: 'posts',
     timestamps: false
 });
-
 
 const getImageSizes = (metaValue) => {
     try {
@@ -193,11 +194,11 @@ const migrateData = async () => {
                 }
 
                 if (metaValue) {
-                        const sizes = getImageSizes(metaValue);
-                        image_small = sizes.image_small;
-                        image_mid = sizes.image_mid;
-                        image_big = sizes.image_big;
-                    }
+                    const sizes = getImageSizes(metaValue);
+                    image_small = sizes.image_small;
+                    image_mid = sizes.image_mid;
+                    image_big = sizes.image_big;
+                }
                 // if (metaValue) {
                 //     console.log("Processing metadata for image_small...");
                 //     image_small = getImageSmall(metaValue); // Extract image_small
@@ -221,14 +222,17 @@ const migrateData = async () => {
                     // }
                 }
 
+                // const description = metaMap[post.ID]?.rank_math_description || "hello";
+                // console.log(metaMap[post.ID], "`````````````````")
+                // console.log('description:', description);
                 return {
                     id: post.ID,
                     lang_id: 1, // Default lang_id
-                    title: post.post_title,
+                    title: metaMap[post.ID]?.rank_math_title || post.post_title,
                     title_slug: post.post_name,
-                    summary: post.post_excerpt || null,
+                    summary: metaMap[post.ID]?.rank_math_description || null,
                     content: post.post_content,
-                    post_type: post.post_type || null,
+                    post_type: 'article',
                     user_id: post.post_author || null,
                     status: post.post_status === 'publish' ? 1 : 0,
                     updated_at: post.post_modified,
@@ -243,10 +247,11 @@ const migrateData = async () => {
                     pageviews: parseInt(metaMap[post.ID]?.post_views_count || 0, 10),
                     image_description: metaMap[post.ID]?._wp_attachment_image_alt || null,
                     // Additional field from wp_term_relationships
-                    category_id: taxonomyMap[post.ID] || null,
+                    category_id: taxonomyMap[post.ID] || 1,
                     // Retain other fields as they are
                     title_hash: post.title_hash || null,
-                    keywords: post.keywords || null,
+                    // keywords: post.keywords || null,
+                    keywords: metaMap[post.ID]?.rank_math_focus_keyword || null,
                     image_slider: post.image_slider || null,
                     // image_big: post.image_big || null,
                     // image_mid: post.image_mid || null,
