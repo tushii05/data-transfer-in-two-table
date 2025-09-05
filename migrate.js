@@ -50,7 +50,7 @@ const LocalTable = sequelize.define('LocalTable', {
     is_scheduled: { type: DataTypes.TINYINT, allowNull: true, defaultValue: 0 },
     visibility: { type: DataTypes.TINYINT, allowNull: true, defaultValue: 1 },
     show_right_column: { type: DataTypes.TINYINT, allowNull: true, defaultValue: 1 },
-    isOld: { type: DataTypes.TINYINT, allowNull: true, defaultValue: 0 },
+    isOld: { type: DataTypes.TINYINT, allowNull: true, defaultValue: 1 },
     post_type: { type: DataTypes.STRING, allowNull: true, defaultValue: 'post' },
     video_path: { type: DataTypes.STRING, allowNull: true },
     video_storage: { type: DataTypes.STRING, allowNull: true, defaultValue: 'local' },
@@ -71,7 +71,7 @@ const LocalTable = sequelize.define('LocalTable', {
     created_at: { type: DataTypes.DATE, allowNull: true },
     updated_at: { type: DataTypes.DATE, allowNull: true },
 }, {
-    tableName: 'posts',
+    tableName: 'postsNew',
     timestamps: false
 });
 
@@ -124,9 +124,20 @@ const migrateData = async () => {
 
         while (true) {
             // Fetch data from `wp_posts` in chunks where `post_type` is `post`
+            // const [wpPosts] = await wpConnection.execute(
+            //     'SELECT * FROM wp_posts WHERE post_type = ? AND post_status != ? LIMIT ? OFFSET ?',
+            //     ['post', 'auto-draft', limit, offset]
+            // );
+
+            const safeLimit = parseInt(limit, 10);
+            const safeOffset = parseInt(offset, 10);
+
             const [wpPosts] = await wpConnection.execute(
-                'SELECT * FROM wp_posts WHERE post_type = ? AND post_status != ? LIMIT ? OFFSET ?',
-                ['post', 'auto-draft', limit, offset]
+                `SELECT * FROM wp_posts 
+   WHERE post_type = ? 
+     AND post_status != ? 
+   LIMIT ${safeLimit} OFFSET ${safeOffset}`,
+                ['post', 'auto-draft']
             );
 
             if (wpPosts.length === 0) {
