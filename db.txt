@@ -1,0 +1,39 @@
+check category 
+
+
+SELECT 
+    t.term_id AS category_id,
+    t.name AS category_name,
+    t.slug
+FROM wp_terms t
+JOIN wp_term_taxonomy tt ON t.term_id = tt.term_id
+WHERE tt.taxonomy = 'category'
+ORDER BY t.name ASC;
+
+
+//unique category IDs and whether they exist in categories (matched) or not (not matched)
+
+SELECT 
+    p.category_id,
+    CASE 
+        WHEN c.id IS NOT NULL THEN 'Matched'
+        ELSE 'Not Matched'
+    END AS category_status,
+    COUNT(*) AS post_count
+FROM postsnew p
+LEFT JOIN categories c ON p.category_id = c.id
+GROUP BY p.category_id, category_status
+ORDER BY category_status DESC, post_count DESC;
+
+
+category_id
+
+SELECT 
+    t.term_id        AS category_id,
+    t.name           AS category_name,
+    p.ID             AS post_id,
+    p.post_title     AS post_title,
+    p.post_date      AS post_date FROM wp_terms t JOIN wp_term_taxonomy tt 
+    ON t.term_id = tt.term_id JOIN wp_term_relationships tr 
+    ON tt.term_taxonomy_id = tr.term_taxonomy_id JOIN wp_posts p 
+    ON tr.object_id = p.ID WHERE tt.taxonomy = 'category' AND p.post_type = 'post' AND p.post_status = 'publish' ORDER BY t.term_id, p.post_date DESC
